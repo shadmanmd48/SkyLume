@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyLume - Weather Dashboard</title>
+  <meta name="description" content="SkyLume - Real-time weather dashboard, hourly and 5-day forecasts with interactive map.">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- 1. HEADER (Navigation & Global Controls)  -->
+  <header class="topbar">
+    <!-- Left: Logo -->
+    <div class="topbar__logo">
+      <span class="topbar__logo-icon" aria-hidden="true">🌤️</span>
+      <h1 class="topbar__title">SkyLume</h1>
+    </div>
+
+    <!-- Center: Mode Toggle -->
+    <nav class="topbar__mode-nav" aria-label="Dashboard mode">
+      <div class="topbar__mode-toggle" role="group" aria-label="Select mode">
+        <button type="button" id="mode-my-weather" class="topbar__mode-btn topbar__mode-btn--active" aria-pressed="true">
+          My Weather
+        </button>
+        <button type="button" id="mode-explore" class="topbar__mode-btn" aria-pressed="false">
+          Explore
+        </button>
+      </div>
+    </nav>
+
+    <!-- Right: Controls (Theme, Unit, Saved Cities, Geolocation) -->
+    <div class="topbar__actions">
+      <button type="button" id="theme-toggle" class="topbar__btn" aria-label="Toggle visual theme">
+        🎨
+      </button>
+
+      <div class="topbar__unit-toggle" role="group" aria-label="Temperature unit">
+        <button type="button" id="unit-celsius" data-unit="C" class="topbar__unit-btn topbar__unit-btn--active" aria-pressed="true">
+          °C
+        </button>
+        <button type="button" id="unit-fahrenheit" data-unit="F" class="topbar__unit-btn" aria-pressed="false">
+          °F
+        </button>
+      </div>
+
+      <button type="button" id="saved-cities-btn" class="topbar__saved-btn" aria-label="View saved cities">
+        Saved
+        <span id="saved-count" class="topbar__badge">3</span>
+      </button>
+
+      <button type="button" id="locate-btn" class="topbar__btn" aria-label="Locate my position">
+        ⌖
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. MAP PANEL (Main Interactive Map & Card) -->
+  <main class="map-panel">
+    <!-- Interactive Map Canvas Placeholder -->
+    <div id="map" class="map-panel__canvas" aria-label="Interactive world weather map"></div>
+
+    <!-- Top-Left: Search Bar & Info Chip -->
+    <div class="map-panel__search-container">
+      <div class="search-bar">
+        <span class="search-bar__icon" aria-hidden="true">🔍</span>
+        <input 
+          type="search" 
+          id="city-search" 
+          class="search-bar__input" 
+          placeholder="Search any city or country..." 
+          autocomplete="off"
+          aria-label="Search any city or country"
+          aria-autocomplete="list"
+          aria-controls="search-suggestions"
+        >
+        <ul id="search-suggestions" class="search-bar__suggestions" role="listbox" aria-label="Search suggestions" hidden></ul>
+      </div>
+
+      <div id="map-info-chip" class="map-panel__info-chip">
+        Celsius · 2D Map · City view · Charcoal Noir
+      </div>
+    </div>
+
+    <!-- Bottom-Left: Map Controls (2D/3D & Zoom/Recenter) -->
+    <div class="map-panel__controls">
+      <div class="view-switch" role="group" aria-label="Map projection view">
+        <button type="button" id="view-2d" class="view-switch__btn view-switch__btn--active" aria-pressed="true">
+          2D Map
+        </button>
+        <button type="button" id="view-3d" class="view-switch__btn" aria-pressed="false">
+          3D Globe
+        </button>
+      </div>
+
+      <div class="zoom-group" role="group" aria-label="Map zoom controls">
+        <button type="button" id="zoom-in" class="zoom-group__btn" aria-label="Zoom in">+</button>
+        <button type="button" id="zoom-out" class="zoom-group__btn" aria-label="Zoom out">−</button>
+        <button type="button" id="recenter-map" class="zoom-group__btn" aria-label="Recenter map to selected city">⊙</button>
+      </div>
+    </div>
+
+    <!-- Explore Panel Placeholder (Hidden by default for Explore mode) -->
+    <div id="explore-panel" class="explore-panel" hidden></div>
+
+    <!-- Floating Weather Card (Right Side) -->
+    <aside class="weather-card" aria-labelledby="city-name">
+      <!-- Animated Sky Scene Banner -->
+      <div id="sky-scene" class="weather-card__scene">
+        <span id="scene-badge" class="weather-card__scene-badge">Night</span>
+      </div>
+
+      <!-- City Heading & Favorite Button -->
+      <div class="weather-card__header">
+        <h2 id="city-name" class="weather-card__city">Chennai, India</h2>
+        <button type="button" id="fav-btn" class="weather-card__fav-btn is-active" aria-label="Toggle favourite city" aria-pressed="true">
+          ♥
+        </button>
+      </div>
+
+      <!-- Subline: Flag, State & Local Time -->
+      <p class="weather-card__subline">
+        <span id="country-flag" aria-label="India">🇮🇳</span>
+        <span id="region-name">Tamil Nadu</span> ·
+        <time id="local-time">11:22 PM local</time>
+      </p>
+
+      <!-- Main Temperature & Icon -->
+      <div class="weather-card__temperature-row">
+        <span id="current-weather-icon" class="weather-card__weather-icon" aria-hidden="true">🌙☁️</span>
+        <span id="current-temp" class="weather-card__temp-value">29</span>
+        <span id="current-temp-unit" class="weather-card__temp-unit">°C</span>
+      </div>
+
+      <!-- Condition Line -->
+      <div class="weather-card__condition-row">
+        <span id="condition-text" class="weather-card__condition-text">Partly Cloudy</span>
+        <span class="weather-card__separator">·</span>
+        <span class="weather-card__feels-like">Feels like <span id="feels-like-temp">32°C</span></span>
+        <span id="condition-tag" class="weather-card__condition-tag">NOW</span>
+      </div>
+
+      <!-- High / Low Temperatures -->
+      <p class="weather-card__high-low">
+        <span class="weather-card__high">↑ <span id="temp-high">33°</span></span>
+        <span class="weather-card__low">↓ <span id="temp-low">26°</span></span>
+      </p>
+
+      <!-- 2-Column Grid of 8 Weather Stat Tiles -->
+      <ul class="weather-card__stats-grid" aria-label="Weather metrics">
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">💧</span> Humidity</span>
+          <span id="stat-humidity" class="stat-tile__value">68%</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">💨</span> Wind</span>
+          <span id="stat-wind" class="stat-tile__value">14 km/h</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">☂️</span> Rain chance</span>
+          <span id="stat-rain-chance" class="stat-tile__value">11%</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">👁️</span> Visibility</span>
+          <span id="stat-visibility" class="stat-tile__value">9 km</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">☀️</span> UV index</span>
+          <span id="stat-uv-index" class="stat-tile__value">8 · High</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">🧭</span> Wind dir</span>
+          <span id="stat-wind-dir" class="stat-tile__value">E</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">🌅</span> Sunrise</span>
+          <span id="stat-sunrise" class="stat-tile__value">5:54 AM</span>
+        </li>
+        <li class="stat-tile">
+          <span class="stat-tile__label"><span aria-hidden="true">🌇</span> Sunset</span>
+          <span id="stat-sunset" class="stat-tile__value">6:12 PM</span>
+        </li>
+      </ul>
+    </aside>
+  </main>
+
+  <!-- 3. SAVED CITIES ROW (Quick Access Chips) -->
+  <nav class="saved-row" aria-label="Saved locations">
+    <span class="saved-row__label">SAVED</span>
+    <ul id="saved-cities-list" class="saved-row__list">
+      <li class="saved-chip saved-chip--active">
+        <button type="button" class="saved-chip__select-btn" aria-label="Select Chennai">
+          <span class="saved-chip__icon" aria-hidden="true">🌧️</span>
+          <span class="saved-chip__name">Chennai</span>
+          <span class="saved-chip__temp">29°</span>
+        </button>
+        <button type="button" class="saved-chip__remove-btn" aria-label="Remove Chennai from saved">✕</button>
+      </li>
+      <li class="saved-chip">
+        <button type="button" class="saved-chip__select-btn" aria-label="Select Lisbon">
+          <span class="saved-chip__icon" aria-hidden="true">⛅</span>
+          <span class="saved-chip__name">Lisbon</span>
+          <span class="saved-chip__temp">24°</span>
+        </button>
+        <button type="button" class="saved-chip__remove-btn" aria-label="Remove Lisbon from saved">✕</button>
+      </li>
+      <li class="saved-chip">
+        <button type="button" class="saved-chip__select-btn" aria-label="Select Tokyo">
+          <span class="saved-chip__icon" aria-hidden="true">🌙</span>
+          <span class="saved-chip__name">Tokyo</span>
+          <span class="saved-chip__temp">21°</span>
+        </button>
+        <button type="button" class="saved-chip__remove-btn" aria-label="Remove Tokyo from saved">✕</button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- 4. HOURLY FORECAST (Horizontal Scroll List) -->
+  <section class="hourly" aria-labelledby="hourly-heading">
+    <div class="hourly__header">
+      <h3 id="hourly-heading" class="hourly__title">Hourly forecast</h3>
+      <span class="hourly__separator" aria-hidden="true">·</span>
+      <span id="hourly-sublabel" class="hourly__sublabel">Chennai, 11 PM local</span>
+    </div>
+
+    <ul id="hourly-forecast-list" class="hourly__list">
+      <!-- Hydrated dynamically by JS -->
+    </ul>
+  </section>
+
+  <!-- 5. 5-DAY FORECAST -->
+  <section class="daily" aria-label="5-day forecast">
+    <ul id="daily-forecast-list" class="daily__list">
+      <!-- Hydrated dynamically by JS -->
+    </ul>
+  </section>
+
+  <!-- 6. FOOTER -->
+  <footer class="footer">
+    <p class="footer__text">Your world. Your weather. Your atmosphere.</p>
+  </footer>
+
+  <!-- 7. OVERLAYS & STATES (Hidden by default) -->
+  <!-- Loading State -->
+  <div id="loading" class="state-overlay" hidden aria-live="polite">
+    <div class="state-overlay__content">
+      <span class="state-overlay__spinner" aria-hidden="true">⏳</span>
+      <p class="state-overlay__text">Loading weather...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div id="error" class="state-overlay" hidden aria-live="assertive">
+    <div class="state-overlay__content">
+      <span class="state-overlay__icon" aria-hidden="true">⚠️</span>
+      <p class="state-overlay__text">City not found. Try another search.</p>
+      <button type="button" id="retry-btn" class="state-overlay__retry-btn">Retry</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
