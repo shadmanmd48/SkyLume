@@ -1,0 +1,37 @@
+/* ==========================================================================
+   DESIGN TOKENS (:root)
+   All color, font, spacing, and geometry tokens live here.
+   Colors are NEVER hardcoded outside this file.
+   ========================================================================== */
+:root {
+  /* Core Color Palette */
+  --bg: #16181d;
+  --panel: #1f2227;
+  --panel-2: #262a31;
+  --border: #2c3038;
+  --text: #f1f3f6;
+  --text-dim: #8d94a0;
+  --accent: #a9c7e8;
+  --accent-text: #14202e;
+  --accent-hover: rgba(20, 32, 46, 0.15);
+  --warm: #f4b942;
+  --danger: #e8607a;
+  --danger-glow: rgba(232, 96, 122, 0.15);
+
+  /* Geometry & Shadows */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 9999px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --font: "Manrope", system-ui, sans-serif;
+
+  /* Theme-Ready Variables */
+  --map-bg: #14161a;
+  --banner-from: #1b2550;
+  --banner-to: #2f3f86;
+
+  /* Alpha & Helper Variables */
+  --transparent: transparent;
+  --search-bg: rgba(31, 34, 39, 0.75);
+  --badge-bg: rgba(22, 24, 29, 0.65);
+}

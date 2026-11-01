@@ -1,0 +1,145 @@
+/* ==========================================================================
+   LAYOUT STYLES
+   Page grid, map panel container, floating elements, and responsive rules.
+   ========================================================================== */
+
+/* Map Panel Container */
+.map-panel {
+  position: relative;
+  height: 520px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* Faint Grid Map Canvas */
+#map,
+.map-panel__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--map-bg);
+  background-image:
+    linear-gradient(var(--border) 1px, var(--transparent) 1px),
+    linear-gradient(90deg, var(--border) 1px, var(--transparent) 1px);
+  background-size: 40px 40px;
+}
+
+/* Search Bar Container (Top-Left) */
+.map-panel__search-container {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* Map Controls Container (Bottom-Left) */
+.map-panel__controls {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* Explore Panel Placeholder */
+.explore-panel {
+  position: absolute;
+  top: 70px;
+  left: 16px;
+  z-index: 15;
+}
+
+/* Floating Weather Card (Right Side) */
+.weather-card {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: 290px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 900px) {
+  .map-panel {
+    height: auto;
+    overflow: visible;
+  }
+
+  .map-panel__canvas {
+    position: relative;
+    height: 340px;
+    border-radius: var(--radius);
+  }
+
+  .weather-card {
+    position: static;
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .daily__list {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) var(--transparent);
+  }
+
+  .daily__item {
+    flex: 0 0 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .topbar__logo {
+    order: 1;
+  }
+
+  .topbar__actions {
+    order: 2;
+  }
+
+  .topbar__mode-nav {
+    order: 3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .map-panel__search-container {
+    right: 16px;
+    width: calc(100% - 32px);
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  .map-panel__info-chip {
+    display: none;
+  }
+}
