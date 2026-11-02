@@ -55,24 +55,23 @@ export function renderSuggestions({ suggestions, isRecents = false, highlightedI
 
     // Recent items
     suggestions.forEach((city, index) => {
-      const isHighlighted = index === highlightedIndex;
-
-      const boldCity = createElement("strong", { text: city.city });
-      const comma = document.createTextNode(city.country ? ", " : "");
-      const countrySpan = createElement("span", {
-        text: city.country || "",
-        attributes: { style: "color: var(--text-dim);" }
-      });
-
+      const optId = `suggestion-opt-${index}`;
       const li = createElement("li", {
         className: isHighlighted ? "is-highlighted" : "",
         attributes: {
+          id: optId,
           role: "option",
           "aria-selected": String(isHighlighted),
           "data-id": city.id
         },
         children: [boldCity, comma, countrySpan]
       });
+
+      if (isHighlighted) {
+        requestAnimationFrame(() => {
+          li.scrollIntoView({ block: "nearest" });
+        });
+      }
 
       container.appendChild(li);
     });
@@ -102,6 +101,7 @@ export function renderSuggestions({ suggestions, isRecents = false, highlightedI
   container.hidden = false;
   suggestions.forEach((city, index) => {
     const isHighlighted = index === highlightedIndex;
+    const optId = `suggestion-opt-${index}`;
 
     const boldCity = createElement("strong", { text: city.city });
     const comma = document.createTextNode(", ");
@@ -113,12 +113,19 @@ export function renderSuggestions({ suggestions, isRecents = false, highlightedI
     const li = createElement("li", {
       className: isHighlighted ? "is-highlighted" : "",
       attributes: {
+        id: optId,
         role: "option",
         "aria-selected": String(isHighlighted),
         "data-id": city.id
       },
       children: [boldCity, comma, countrySpan]
     });
+
+    if (isHighlighted) {
+      requestAnimationFrame(() => {
+        li.scrollIntoView({ block: "nearest" });
+      });
+    }
 
     container.appendChild(li);
   });
@@ -134,5 +141,9 @@ export function closeSuggestions() {
   if (container) {
     clearChildren(container);
     container.hidden = true;
+  }
+  const searchInput = document.getElementById("city-search");
+  if (searchInput) {
+    searchInput.removeAttribute("aria-activedescendant");
   }
 }

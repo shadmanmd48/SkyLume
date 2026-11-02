@@ -369,6 +369,7 @@ function init() {
         if (count > 0) {
           event.preventDefault();
           state.highlightedIndex = (state.highlightedIndex + 1) % count;
+          searchInput.setAttribute("aria-activedescendant", `suggestion-opt-${state.highlightedIndex}`);
           renderSuggestions({
             suggestions: state.suggestions,
             isRecents: state.isShowingRecents,
@@ -380,6 +381,7 @@ function init() {
         if (count > 0) {
           event.preventDefault();
           state.highlightedIndex = (state.highlightedIndex - 1 + count) % count;
+          searchInput.setAttribute("aria-activedescendant", `suggestion-opt-${state.highlightedIndex}`);
           renderSuggestions({
             suggestions: state.suggestions,
             isRecents: state.isShowingRecents,
@@ -435,7 +437,7 @@ function init() {
 
   // 8. Outside Click Listener to Close Suggestions
   document.addEventListener("click", (event) => {
-    if (!event.target.closest(".search-bar")) {
+    if (!event.target.closest(".search-bar") && !event.target.closest(".search-wrap")) {
       closeSuggestions();
     }
   });
