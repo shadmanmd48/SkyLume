@@ -71,19 +71,24 @@ export function loadSaved() {
  * @returns {void}
  */
 export function saveSaved(list) {
-  save(`${CONFIG.STORAGE_PREFIX}saved`, Array.isArray(list) ? list : []);
+  const sanitized = Array.isArray(list)
+    ? list.filter((item) => item && typeof item === "object" && typeof item.id === "string")
+    : [];
+  save(`${CONFIG.STORAGE_PREFIX}saved`, sanitized);
 }
 
 /**
  * Loads recent city search IDs from storage.
  * 
- * @returns {string[]} Array of recent city IDs.
+ * @returns {string[]} Array of recent city IDs capped to CONFIG.RECENT_LIMIT.
  */
 export function loadRecent() {
   const data = load(`${CONFIG.STORAGE_PREFIX}recent`, []);
 
-  if (Array.isArray(data) && data.every((item) => typeof item === "string")) {
-    return data;
+  if (Array.isArray(data)) {
+    return data
+      .filter((item) => typeof item === "string" && item.trim().length > 0)
+      .slice(0, CONFIG.RECENT_LIMIT);
   }
 
   return [];
@@ -96,7 +101,12 @@ export function loadRecent() {
  * @returns {void}
  */
 export function saveRecent(list) {
-  save(`${CONFIG.STORAGE_PREFIX}recent`, Array.isArray(list) ? list : []);
+  const sanitized = Array.isArray(list)
+    ? list
+        .filter((item) => typeof item === "string" && item.trim().length > 0)
+        .slice(0, CONFIG.RECENT_LIMIT)
+    : [];
+  save(`${CONFIG.STORAGE_PREFIX}recent`, sanitized);
 }
 
 /**
