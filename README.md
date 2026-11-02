@@ -50,6 +50,3 @@ Using Node:
 npx serve client -p 3000
 ```
 Then visit: [http://localhost:3000](http://localhost:3000)
-
-## License
-MIT

@@ -329,9 +329,9 @@
   background: var(--panel-2);
 }
 
-/* ==========================================================================
+/* 
    3. WEATHER CARD INNER ELEMENTS
-   ========================================================================== */
+   */
 .weather-card__scene {
   position: relative;
   height: 100px;
@@ -515,9 +515,9 @@
   color: var(--text);
 }
 
-/* ==========================================================================
-   4. SAVED CITIES ROW (.saved-row)
-   ========================================================================== */
+/* 
+   4. SAVED CITIES ROW (.saved-row) */
+
 .saved-row {
   display: flex;
   align-items: center;
@@ -845,6 +845,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
