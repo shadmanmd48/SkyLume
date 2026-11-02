@@ -12,10 +12,14 @@
  * @returns {number} Converted and rounded temperature.
  */
 export function convertTemp(tempC, unit = "C") {
-  if (unit === "F") {
-    return Math.round((tempC * 9) / 5 + 32);
+  if (tempC === null || tempC === undefined || isNaN(Number(tempC))) {
+    return 0;
   }
-  return Math.round(tempC);
+  const numericTemp = Number(tempC);
+  if (unit === "F") {
+    return Math.round((numericTemp * 9) / 5 + 32);
+  }
+  return Math.round(numericTemp);
 }
 
 /**
@@ -23,8 +27,11 @@ export function convertTemp(tempC, unit = "C") {
  * 
  * @param {number} tempC - Temperature in degrees Celsius.
  * @param {"C"|"F"} [unit="C"] - Target temperature unit.
- * @returns {string} Formatted temperature string.
+ * @returns {string} Formatted temperature string or dash if missing.
  */
 export function formatTemp(tempC, unit = "C") {
+  if (tempC === null || tempC === undefined || isNaN(Number(tempC))) {
+    return "—";
+  }
   return String(convertTemp(tempC, unit));
 }
