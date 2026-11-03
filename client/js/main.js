@@ -23,6 +23,7 @@ import { renderHourly } from "./render/hourly.js";
 import { renderDaily } from "./render/daily.js";
 import { renderSaved } from "./render/saved.js";
 import { renderSuggestions, closeSuggestions } from "./render/suggestions.js";
+import { initMap, zoomIn, zoomOut, recenter, invalidateSize } from "./render/map.js";
 import { debounce } from "./utils/debounce.js";
 
 // ============================================================================
@@ -203,6 +204,12 @@ function renderAll() {
   renderDaily(state.weather, state.unit, state.activeDayIndex);
   renderSaved(state.savedCities, state.unit, state.activeCityId);
   renderHeart();
+
+  // Initialize map after first render and recalculate viewport size
+  initMap("map");
+  requestAnimationFrame(() => {
+    invalidateSize();
+  });
 }
 
 /**
@@ -506,7 +513,31 @@ function init() {
     });
   }
 
-  // 13. Mount initial city (restores last viewed city, or default)
+  // 13. Map Navigation Controls (Zoom In, Zoom Out, Recenter)
+  const btnZoomIn = document.getElementById("zoom-in");
+  if (btnZoomIn) {
+    btnZoomIn.addEventListener("click", () => zoomIn());
+  }
+
+  const btnZoomOut = document.getElementById("zoom-out");
+  if (btnZoomOut) {
+    btnZoomOut.addEventListener("click", () => zoomOut());
+  }
+
+  const btnRecenter = document.getElementById("recenter-map");
+  if (btnRecenter) {
+    btnRecenter.addEventListener("click", () => recenter());
+  }
+
+  // 14. Responsive Map Viewport Resize Listener
+  window.addEventListener(
+    "resize",
+    debounce(() => {
+      invalidateSize();
+    }, CONFIG.DEBOUNCE_MS)
+  );
+
+  // 15. Mount initial city (restores last viewed city, or default)
   const initialCity = loadLastCity();
   loadCity(initialCity);
 }
