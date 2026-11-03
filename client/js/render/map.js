@@ -43,4 +43,12 @@ export function initMap(containerId) {
     maxZoom: CONFIG.MAP_MAX_ZOOM,
     zoomControl: false
   });
+
+  // Attach dark CARTO tile layer with proper attribution
+  window.L.tileLayer(CONFIG.MAP_TILE_URL, {
+    subdomains: CONFIG.MAP_SUBDOMAINS,
+    attribution: CONFIG.MAP_ATTRIBUTION,
+    minZoom: CONFIG.MAP_MIN_ZOOM,
+    maxZoom: CONFIG.MAP_MAX_ZOOM
+  }).addTo(mapInstance);
 }
