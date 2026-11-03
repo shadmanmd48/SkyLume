@@ -52,3 +52,51 @@ export function initMap(containerId) {
     maxZoom: CONFIG.MAP_MAX_ZOOM
   }).addTo(mapInstance);
 }
+
+/**
+ * Zooms in the map by one level.
+ * Safely does nothing if the map has not been initialized.
+ *
+ * @returns {void}
+ */
+export function zoomIn() {
+  if (mapInstance) {
+    mapInstance.zoomIn();
+  }
+}
+
+/**
+ * Zooms out the map by one level.
+ * Safely does nothing if the map has not been initialized.
+ *
+ * @returns {void}
+ */
+export function zoomOut() {
+  if (mapInstance) {
+    mapInstance.zoomOut();
+  }
+}
+
+/**
+ * Recenters the map to the default coordinates and zoom level defined in CONFIG.
+ * Safely does nothing if the map has not been initialized.
+ *
+ * @returns {void}
+ */
+export function recenter() {
+  if (mapInstance) {
+    mapInstance.setView(CONFIG.MAP_DEFAULT_CENTER, CONFIG.MAP_DEFAULT_ZOOM);
+  }
+}
+
+/**
+ * Tells Leaflet to recalculate the map container's size.
+ * Useful after container dimension changes or window resizes so tiles don't get misaligned.
+ *
+ * @returns {void}
+ */
+export function invalidateSize() {
+  if (mapInstance) {
+    mapInstance.invalidateSize();
+  }
+}
