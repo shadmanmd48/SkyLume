@@ -3,6 +3,15 @@
    Page grid, map panel container, floating elements, and responsive rules.
    ========================================================================== */
 
+/* ==========================================================================
+   STACKING CONTEXT & Z-INDEX SCALE:
+   - z-index: 1 (#map): Sits at lowest layer behind all interactive controls.
+   - z-index: 10 (.map-panel__controls): Floating zoom & projection controls.
+   - z-index: 10 (.weather-card): Floating weather metrics card on the right.
+   - z-index: 20 (.map-panel__search-container): Top-left search bar & info chip.
+   - z-index: 30 (.search-bar__suggestions): Autocomplete suggestions dropdown.
+   ========================================================================== */
+
 /* Map Panel Container */
 .map-panel {
   position: relative;
@@ -12,7 +21,7 @@
   overflow: hidden;
 }
 
-/* Faint Grid Map Canvas */
+/* Base Map Canvas */
 #map,
 .map-panel__canvas {
   position: absolute;
@@ -20,10 +29,19 @@
   width: 100%;
   height: 100%;
   background-color: var(--map-bg);
-  background-image:
-    linear-gradient(var(--border) 1px, var(--transparent) 1px),
-    linear-gradient(90deg, var(--border) 1px, var(--transparent) 1px);
-  background-size: 40px 40px;
+  z-index: 1; /* Lowest z-index so map tiles remain behind floating overlays */
+}
+
+/* Fallback state if Leaflet library or network fails */
+#map:empty,
+#map:not(.leaflet-container) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
 }
 
 /* Search Bar Container (Top-Left) */
@@ -34,7 +52,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  z-index: 10;
+  z-index: 20;
 }
 
 /* Map Controls Container (Bottom-Left) */
@@ -74,6 +92,29 @@
   flex-direction: column;
 }
 
+/* Leaflet Attribution Styling (Small, dim, bottom-right, clear of weather card) */
+.leaflet-control-attribution {
+  background: var(--badge-bg) !important;
+  color: var(--text-dim) !important;
+  font-family: var(--font) !important;
+  font-size: 10px !important;
+  padding: 3px 8px !important;
+  border-radius: var(--radius-sm) !important;
+  backdrop-filter: blur(4px);
+  margin-right: 320px !important; /* Clears floating weather card (290px + 16px margin) */
+  margin-bottom: 8px !important;
+  border: 1px solid var(--border) !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--accent) !important;
+  text-decoration: none;
+}
+
+.leaflet-control-attribution a:hover {
+  text-decoration: underline;
+}
+
 /* ==========================================================================
    RESPONSIVE BREAKPOINTS
    ========================================================================== */
@@ -81,18 +122,32 @@
   .map-panel {
     height: auto;
     overflow: visible;
+    border: none;
+    background: transparent;
   }
 
+  #map,
   .map-panel__canvas {
     position: relative;
     height: 340px;
     border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .map-panel__controls {
+    bottom: auto;
+    top: 284px;
   }
 
   .weather-card {
     position: static;
     width: 100%;
     margin-top: 14px;
+  }
+
+  .leaflet-control-attribution {
+    margin-right: 8px !important; /* Weather card is moved below map */
   }
 
   .daily__list {
